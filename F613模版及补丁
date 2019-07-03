@@ -47,3 +47,27 @@ service Tl1DefaultCreate gemport 1
 exit
 exit
 wr
+
+con t
+file-server boot-server ftp ipaddress 10.20.0.251 user zte password zte
+end
+clock set 09:28:29 mar 25 2018
+file download version prwgz.bt
+wr 
+
+
+
+
+
+con t
+file-server boot-server ftp ipaddress 10.20.0.251 user zte password zte
+end
+
+file download version gtxk.bt
+update-boot slot 1 local
+file download version gtxk.fw
+update-version slot 1 local
+file download version gtxk_lx.mvr
+update-version slot 1 local
+
+reset slot 1
