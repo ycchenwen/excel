@@ -1,0 +1,56 @@
+导出的bras上网记录
+jtkd域：
+提取内外层vlan标识  MID(D2,FIND(":",D2)+1,FIND(" ",D2)-FIND(":",D2))
+分列
+提取CID信息         MID(D2,FIND(" 10.",D2)+1,LEN(D2)-FIND(" 10.",D2)+1)
+剔除空格EP 空格GP
+直接提取内外标识    MID(D2,FIND(":",D2)+1,FIND(" ",D2)-FIND(":",D2)-1)
+直接提取CID信息     MID(D2,FIND(" 10.",D2)+1,SEARCH(" ?P",D2)-FIND(" 10.",D2)-1)
+
+PON口分裂导表转换
+A2&"_框:1/槽:"&LEFT(SUBSTITUTE(B2,"1-1-",""),FIND("-",SUBSTITUTE(B2,"1-1-",""))-1)&"/端口:"&RIGHT(B2,LEN(B2)-FIND("#",SUBSTITUTE(B2,"-","#",3)))
+
+唯一标识    OLT名称&"_框:"&框号&"/槽:"&槽位号&"/端口:"&端口号&"/ONTID:"&第几台设备号
+PON口       OLT名称&"_框:"&框号&"/槽:"&槽位号&"/端口:"&端口号
+
+
+
+华为网管表   提取sn码   LEFT(J2,FIND("(",J2,1)-1)                     48575443CA1AB26C(HWTCCA1AB26C)
+
+
+CID标识     OLTIP地址&"/"&机架&"/"&机框&"/"&槽位&"/0/"&端口&"/"&REPT("0",24-LEN(设备认证值))&设备认证值
+华为网管    OLTIP地址&"/0/"&机框&"/"&槽位&"/0/"&端口&"/"&REPT("0",24-LEN(设备LOID))&设备LOID
+
+
+CID++     OLTIP地址&"/"&机架&"/"&机框&"/"&槽位&"/0/"&端口&"/"&ONTID&"/"&REPT("0",24-LEN(设备LOID))&设备LOID
+
+EPON代码成表提取端口vlan信息匹配到端口
+提取onu标识 SUBSTITUTE(RIGHT(C2,LEN(C2)-FIND("epon-",C2)+1),"olt","onu")&":"&MID(D2,FIND("onu ",D2)+4,FIND(" type",D2)-FIND("onu ",D2)-4)       
+
+提取初始认证值
+UPPER(SUBSTITUTE(IF(ISNUMBER(FIND("mac ",D2)),MID(D2,FIND("mac ",D2)+4,FIND(" ip-cfg",D2)-FIND("mac ",D2)-4),IF(ISNUMBER(FIND("loid ",D2)),MID(D2,FIND("loid ",D2)+5,FIND(" ip-cfg",D2)-FIND("loid ",D2)-5),MID(D2,FIND("sn ",D2)+3,FIND(" ip-cfg",D2)-FIND("sn ",D2)-3))),".",""))
+
+槽位  MID(C2,FIND("/",C2)+1,FIND("#",SUBSTITUTE(C2,"/","#",2))-FIND("/",C2)-1)
+端口  RIGHT(C2,LEN(C2)-FIND("#",SUBSTITUTE(C2,"/","#",2)))
+CID值
+B2&"/1/1/"&MID(C2,FIND("/",C2)+1,FIND("#",SUBSTITUTE(C2,"/","#",2))-FIND("/",C2)-1)&"/0/"&RIGHT(C2,LEN(C2)-FIND("#",SUBSTITUTE(C2,"/","#",2)))&"/"&REPT("0",24-LEN(I2))&I2
+
+
+修改七级命名：匹配前四级地址
+EPON里判断接入方式：IF(OR(ISNUMBER(FIND("F820",K2)),ISNUMBER(FIND("F803",K2))),"FTTB","FTTH")
+根据前四级地址生成随机七级地址
+IF(Q2="FTTH",P2&"/"&RANDBETWEEN(1,10)&"栋/"&RANDBETWEEN(1,4)&"单元/室内-FTTH-ONU"&REPT("0",3-LEN(G2))&G2&"-ZX-"&K2,P2&"/"&RANDBETWEEN(1,10)&"栋/"&RANDBETWEEN(1,4)&"单元/楼道XQKD-FTTB-ONU"&REPT("0",3-LEN(G2))&G2&"-ZX-"&K2)
+
+FTTH七级命名：P2&"/"&RANDBETWEEN(1,10)&"栋/"&RANDBETWEEN(1,4)&"单元/室内-FTTH-ONU"&REPT("0",3-LEN(G2))&G2&"-ZX-"&K2
+FTTB七级命名：P2&"/"&RANDBETWEEN(1,10)&"栋/"&RANDBETWEEN(1,4)&"单元/楼道XQKD-FTTB-ONU"&REPT("0",3-LEN(G2))&G2&"-ZX-"&K2
+2-3-501 2-501 取前面
+IF(LEN(H2)-LEN(SUBSTITUTE(H2,"-",""))=2,LEFT(H2,FIND("!",SUBSTITUTE(H2,"-","!",2))-1),LEFT(H2,FIND("-",H2)-1))
+2-3-501 2-501 取后面
+IF(LEN(H2)-LEN(SUBSTITUTE(H2,"-",""))=2,RIGHT(H2,LEN(H2)-FIND("!",SUBSTITUTE(H2,"-","!",2))),RIGHT(H2,LEN(H2)-FIND("-",H2)))
+
+onu名称提取第四级小区:
+MID(H2,FIND("!",SUBSTITUTE(H2,"/","!",3))+1,FIND("!",SUBSTITUTE(H2,"/","!",4))-FIND("!",SUBSTITUTE(H2,"/","!",3))-1)
+
+
+导出RADIUS 新增
+cid = IF(LEFT(L2,4)<>"10.3",L2&"/1/1/"&SUBSTITUTE(M2,"/","/0/")&"/"&REPT("0",24-LEN(K2))&K2,L2&"/0/0/"&SUBSTITUTE(M2,"/","/0/")&"/"&REPT("0",24-LEN(K2))&K2)
