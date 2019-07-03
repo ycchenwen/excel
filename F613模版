@@ -1,0 +1,49 @@
+configure t
+gpon
+profile tcont UP-100M type 3 assured 10240 maximum 1000000      
+profile traffic 100M sir 1000000 pir 1000000
+exit
+gpon
+ profile tcont UP-50M type 2 assured 51200
+ profile traffic DOWN-50M sir 40960 pir 51200
+exit
+exit
+wr
+--------------------------------------------------------------------------------------------
+rogue-onu-detect 2 enable locate enable auto-shutdown enable   开启2槽位流氓onu定位自动关闭功能
+sho pon rogue-onu-detect                                       查看全局流氓onu检测功能
+sho pon rogue-onu-info gpon-olt_1/5/3                          查看5/3口下流氓onu
+sho gpon onu by sn ZTEGC9182139                                通过SN码或LOID查看所在PON口
+sho gpon onu detail-info gpon-onu_1/2/5:17                     查看光猫详细信息
+--------------------------------------------------------------------------------------------
+sho gpon onu uncfg                                             查看未认证
+sho running-config interface gpon-olt_1/1/4                    查看pon口序号
+sho run                                                        查看外标                     
+
+configure t
+interface gpon-olt_1/5/2
+onu 12 type ZTE-F622 sn ZTEGC91990CE
+exit
+
+
+F613模板
+
+con t
+interface gpon-onu_1/4/7:7
+sn-bind disable
+tcont 1 name Tl1DefaultCreate profile UP-100M
+gemport 1 name Tl1DefaultCreate  tcont 1 
+encrypt 1 enable downstream
+switchport mode hybrid vport 1
+service-port 1 vport 1 user-vlan 46 vlan 2253 svlan 2939
+service-port 1 description Tl10pVlan46
+service-port 2 vport 1 user-vlan 41 vlan 2253 svlan 2219
+service-port 2 description Tl10pVlan41
+service-port 3 vport 1 user-vlan 47 vlan 2253 svlan 2401
+service-port 3 description Tl10pVlan47
+exit
+pon-onu-mng gpon-onu_1/4/7:7
+service Tl1DefaultCreate gemport 1
+exit
+exit
+wr
