@@ -50,3 +50,14 @@ onu名称提取第四级小区:
 MID(H2,FIND("!",SUBSTITUTE(H2,"/","!",3))+1,FIND("!",SUBSTITUTE(H2,"/","!",4))-FIND("!",SUBSTITUTE(H2,"/","!",3))-1)
 
 
+Function amnour(s As String) As String    剔除汉字
+    Dim str As String
+    str = ""
+    For i = 1 To Len(s)
+        If Strings.Asc(Mid(s, i, 1)) > 0 Then
+            str = str + Mid(s, i, 1)
+            's = Strings.Replace(Mid(s, i, 1), s, "", , , vbTextCompare)
+        End If
+    Next i
+    amnour = str
+End Function
