@@ -61,3 +61,24 @@ Function amnour(s As String) As String    剔除汉字
     Next i
     amnour = str
 End Function
+
+Sub 插入行()
+Dim dl As Worksheet
+Set dl = Worksheets("段落")
+Dim i As Integer, j As Integer
+Dim k As Integer
+i = 2
+Do While dl.Cells(i, 1) <> "结束"
+     j = dl.Cells(i, 5)
+     dl.Range("A" & i + 1).Resize(j, 1).EntireRow.Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+     For k = 1 To j
+         With dl
+         .Cells(i + k, 1) = .Cells(i, 4) & (.Cells(i, 2) + k)
+         .Cells(i + k, 6) = .Cells(i, 6)
+         .Cells(i + k, 7) = .Cells(i, 7)
+         End With
+     Next k
+     i = i + j + 1
+Loop
+
+End Sub
