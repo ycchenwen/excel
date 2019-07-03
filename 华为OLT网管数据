@@ -1,0 +1,125 @@
+华为OLT开局数据
+
+dba-profile add profile-id 10 profile-name "dba-profile_10" type3 assure 20480 max 51200
+dba-profile add profile-id 11 profile-name "FTTH" type3 assure 10240 max 102400
+dba-profile add profile-id 12 profile-name "FTTHX" type3 assure 8192 max 102400
+dba-profile add profile-id 100 profile-name "ZX" type3 assure 10240 max 102400
+ 
+ ont-srvprofile gpon profile-id 1 profile-name "srv-profile_1"
+  ont-port eth 1
+  commit
+ ont-srvprofile gpon profile-id 2 profile-name "FTTH-yewufafang"
+  ont-port pots 2 eth 4
+  transparent enable
+  port vlan eth 1 translation 96 user-vlan 96
+  commit
+ ont-srvprofile gpon profile-id 3 profile-name "FTTHX"
+  ont-port pots adaptive eth adaptive
+  commit
+ont-srvprofile gpon profile-id 100 profile-name "ZX"
+  ont-port pots adaptive eth adaptive
+  commit
+
+ 
+ ont-lineprofile gpon profile-id 1 profile-name "line-profile_default_1"
+  tcont 1 dba-profile-id 10
+  gem add 1 eth tcont 1
+  gem mapping 1 1 vlan 2519
+  commit
+  quit
+ ont-lineprofile gpon profile-id 2 profile-name "FTTH-yewufafang"
+  tcont 1 dba-profile-id 11
+  gem add 0 eth tcont 1
+  gem mapping 0 0 vlan 96
+  commit
+  quit
+ ont-lineprofile gpon profile-id 3 profile-name "FTTHX"
+  tcont 1 dba-profile-id 12
+  tcont 2 dba-profile-id 12
+  gem add 0 eth tcont 1
+  gem add 1 eth tcont 2
+  gem mapping 0 0 vlan 41
+  gem mapping 0 1 vlan 46
+  gem mapping 1 0 vlan 47
+  gem mapping 1 1 vlan 43
+  commit
+  quit
+ ont-lineprofile gpon profile-id 100 profile-name "ZX"
+  tcont 1 dba-profile-id 100
+  gem add 1 eth tcont 1
+  gem mapping 1 0 vlan 2110
+  gem mapping 1 1 vlan 1997
+  gem mapping 1 2 vlan 3800
+  gem mapping 1 3 vlan 1996
+  commit
+  quit
+
+
+ont-lineprofile
+tr069-management ip-index 0    
+
+
+traffic table ip index 7 name "DEFAULT_SCOS7_CCOS7" cir off color-mode color-blind priority 7 inner-priority 7 priority-policy local-setting
+traffic table ip index 8 name "DEFAULT_SCOS0_CCOS0" cir off color-mode color-blind priority 0 priority-policy local-setting
+traffic table ip index 9 name "DEFAULT_SCOS6_CCOS6" cir off color-mode color-blind priority 6 inner-priority 6 priority-policy local-setting
+traffic table ip index 10 name "jiatingshangwang" cir off color-mode color-blind priority 1 inner-priority 1 priority-policy local-setting
+
+华为ONU数据
+
+interface gpon 0/1
+
+ont add 1 69 sn-auth  48575443CA0AFE6C omci ont-lineprofile-id 1 ont-srvprofile-id 1 desc ONT_NO_DESCRIPTION
+
+ont port native-vlan 1 69 eth 1 vlan 2405 priority 0
+
+quit
+
+service-port vlan 2405 gpon 0/1/1 ont 69 gemport 1 multi-service user-vlan 2405 tag-transform translate-and-add inner-vlan 2304 inner-priority 0
+
+save  
+----------------------------------------------------------------------------
+F613 F623模板  HGU
+
+interface gpon 0/2
+ont add 0 12 sn-auth   5A544547C94A0C20  omci ont-lineprofile-id 3 ont-srvprofile-id 3 desc ONT_NO_DESCRIPTION
+quit
+service-port vlan 2939 gpon 0/2/0 ont 12 gemport 0 multi-service user-vlan 46 tag-transform translate-and-add inner-vlan 2011 inner-priority 7 inbound
+traffic-table index 7 outbound traffic-table index 7
+service-port vlan 2519 gpon 0/2/0 ont 12 gemport 0 multi-service user-vlan 41 tag-transform translate-and-add inner-vlan 2011 inner-priority 0 inbound
+traffic-table index 8 outbound traffic-table index 8
+service-port vlan 2401 gpon 0/2/0 ont 12 gemport 1 multi-service user-vlan 47 tag-transform translate-and-add inner-vlan 2011 inner-priority 0 inbound
+traffic-table index 8 outbound traffic-table index 8
+save  
+
+----------------------------------------------------------------------------
+APP激活  SFU
+
+interface gpon 0/1
+
+ont add 1 9 sn-auth 48575443CA22BE6C omci ont-lineprofile-id 2 ont-srvprofile-id 2 desc ONT_NO_DESCRIPTION
+
+ont port native-vlan 1 9 eth 1 vlan 96 priority 0
+
+quit
+
+service-port vlan 2405 gpon 0/1/1 ont 9 gemport 0 multi-service user-vlan 96 tag-transform translate-and-add inner-vlan 2001 inner-priority 0
+
+save  
+
+
+
+
+
+5A544547 C9479B85  ZTEGC9479B85
+4E42454C B13182BE  贝尔
+
+----------------------------------------------------------------------------
+雪亮工程专线数据
+interface gpon 0/1
+ont add 0 17 sn-auth 434D4849510C5209 omci ont-lineprofile-id 100 ont-srvprofile-id 100 desc ONT_NO_DESCRIPTION
+quit
+service-port vlan 1001 gpon 0/2/0 ont 1 gemport 1 multi-service user-vlan  1001 tag-transform translate
+service-port vlan 1993 gpon 0/1/1 ont 23 gemport 1 multi-service user-vlan  1993 tag-transform translate
+service-port vlan 3800 gpon 0/1/1 ont 23 gemport 1 multi-service user-vlan  3800 tag-transform translate
+service-port vlan 1997 gpon 0/1/1 ont 23 gemport 1 multi-service user-vlan  1997 tag-transform translate
+save
