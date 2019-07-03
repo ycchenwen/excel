@@ -54,3 +54,22 @@ MID(H2,FIND("!",SUBSTITUTE(H2,"/","!",3))+1,FIND("!",SUBSTITUTE(H2,"/","!",4))-F
 
 导出RADIUS 新增
 cid = IF(LEFT(L2,4)<>"10.3",L2&"/1/1/"&SUBSTITUTE(M2,"/","/0/")&"/"&REPT("0",24-LEN(K2))&K2,L2&"/0/0/"&SUBSTITUTE(M2,"/","/0/")&"/"&REPT("0",24-LEN(K2))&K2)
+
+COUNTIFS(INDIRECT("明细表!$B$2:$B$10000"),"长阳",INDIRECT("明细表!$X$2:$X$10000"),">="&1,INDIRECT("明细表!$X$2:$X$10000"),"<"&2)
+COUNTIFS(INDIRECT("明细表!$B$2:$B$10000"),"长阳",INDIRECT("明细表!$X$2:$X$10000"),">="&2)
+
+COUNTIFS(INDIRECT("明细表!$B$2:$B$10000"),"长阳",INDIRECT("明细表!$T$2:$T$10000"),"",INDIRECT("明细表!$R$2:$R$10000"),"<="&($F$2-2))
+COUNTIFS(INDIRECT("明细表!$B$2:$B$10000"),"长阳",INDIRECT("明细表!$T$2:$T$10000"),"",INDIRECT("明细表!$R$2:$R$10000"),">"&($F$2-2),INDIRECT("明细表!$R$2:$R$10000"),"<="&($F$2-1))
+
+剔除夜间20点至早8点 8小时装机超时时间点
+IF(TEXT(A2-INT(A2),"hh:mm:ss")<="12:00:00",INT(A2)+MEDIAN(MOD(A2,1),8/24,20/24)+8/24,INT(A2)+MEDIAN(MOD(A2,1),8/24,20/24)+20/24)
+剔除夜间20点至早8点 实际装机时长（小时）
+MEDIAN(MOD(B2,1)*24,8,20)-MEDIAN(MOD(A2,1)*24,8,20)+(INT(B2)-INT(A2))*12
+
+剔除夜间21点至早8点 8小时投诉超时时间点
+IF(TEXT(A2-INT(A2),"hh:mm:ss")<="13:00:00",INT(A2)+MEDIAN(MOD(A2,1),8/24,21/24)+8/24,INT(A2)+MEDIAN(MOD(A2,1),8/24,21/24)+19/24)
+剔除夜间21点至早8点 实际投诉时长（小时）
+MEDIAN(MOD(B2,1)*24,8,21)-MEDIAN(MOD(A2,1)*24,8,21)+(INT(B2)-INT(A2))*13
+
+IF(T2="","",MEDIAN(MOD(T2,1)*24,8,21)-MEDIAN(MOD(R2,1)*24,8,21)+(INT(T2)-INT(R2))*13)
+IF(R2="","",IF(TEXT(R2-INT(R2),"hh:mm:ss")<="13:00:00",INT(R2)+MEDIAN(MOD(R2,1),8/24,21/24)+8/24,INT(R2)+MEDIAN(MOD(R2,1),8/24,21/24)+19/24))
