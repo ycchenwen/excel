@@ -153,3 +153,49 @@ int range fei_0/1/1-24
 sw vlan 41,46,47 tag
 end
 wr
+
+con t
+interface gpon-onu_1/2/8:1
+tcont 1 name pppoe profile UP-100M
+gemport 1 name pppoe tcont 1
+encrypt 1 enable downstream
+service-port 1 vport 1 user-vlan 1000 to 1015 svlan 2138
+service-port 2 vport 1 user-vlan 2000 to 2015 svlan 2939
+service-port 3 vport 1 user-vlan 3000 to 3015 svlan 2401
+service-port 4 vport 1 user-vlan 2613 transparent
+exit
+pon-onu-mng gpon-onu_1/2/8:1
+service pppoe gemport 1
+mgmt-ip 10.23.249.27 255.255.255.0 vlan 2613 priority 0 route 0.0.0.0 0.0.0.0 10.23.249.21 host 1
+exit
+exit
+#
+
+
+
+telnet onu 
+
+
+config
+interface fei_0/1/1
+switchport vlan 1000,2000,3000 tag
+switchport translate vlan 41 cvlan 1000
+switchport translate vlan 46 cvlan 2000
+switchport translate vlan 47 cvlan 3000
+exit
+interface fei_0/1/2
+switchport vlan 1001,2001,3001 tag
+switchport translate vlan 41 cvlan 1001
+switchport translate vlan 46 cvlan 2001
+switchport translate vlan 47 cvlan 3001
+exit
+interface fei_0/1/3
+switchport vlan 1002,2002,3002 tag
+switchport translate vlan 41 cvlan 1002
+switchport translate vlan 46 cvlan 2002
+switchport translate vlan 47 cvlan 3002
+exit
+......
+interface gei_0/2/1
+switchport vlan 1000-1015,2000-2015,3000-3015,2613 tag
+exit
