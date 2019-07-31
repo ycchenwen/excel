@@ -127,3 +127,29 @@ pon-onu-mng gpon-onu_1/16/14:1
 mgmt-ip 10.23.249.28 255.255.255.0 vlan 2613 priority 0 route 0.0.0.0 0.0.0.0 10.23.249.21 host 1
 exit
 exit
+
+
+con
+int gei_0/2/1
+sw vlan 41,46,47 tag
+exit
+int range fei_0/1/1-8
+sw vlan 41,46,47 tag
+end
+wr
+con
+int gei_0/2/1
+sw vlan 41,46,47 tag
+exit
+int range fei_0/1/1-16
+sw vlan 41,46,47 tag
+end
+wr
+con
+int gei_0/2/1
+sw vlan 41,46,47 tag
+exit
+int range fei_0/1/1-24
+sw vlan 41,46,47 tag
+end
+wr
