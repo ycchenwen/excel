@@ -1,0 +1,60 @@
+HGU型光猫数据制作:
+con t
+interface gpon_onu-1/1/1:2
+sn-bind disable
+tcont 1 name Tl1DefaultCreate profile UP-100M
+gemport 1 name Tl1DefaultCreate tcont 1
+encrypt 1 enable downstream
+exit
+interface vport-1/1/1.2:1
+service-port 1 user-vlan 46 vlan 3365 svlan 2939
+service-port 1 description Tl10pVlan46
+service-port 2 user-vlan 41 vlan 3365 svlan 2141
+service-port 2 description Tl10pVlan41
+service-port 3 user-vlan 47 vlan 3365 svlan 2401
+service-port 3 description Tl10pVlan47
+exit
+pon-onu-mng gpon_onu-1/1/1:2
+service Tl1DefaultCreate gemport 1
+exit
+exit
+write
+
+F804型ONU数据制作:
+con t
+interface gpon_onu-1/1/1:2
+sn-bind disable
+tcont 1 name Tl1DefaultCreate profile UP-100M
+gemport 1 name Tl1DefaultCreate tcont 1
+encrypt 1 enable downstream
+exit
+interface vport-1/1/1.2:1
+service-port 1 user-vlan 46 vlan 3365 svlan 2939
+service-port 1 description Tl10pVlan46
+service-port 2 user-vlan 41 vlan 3365 svlan 2141
+service-port 2 description Tl10pVlan41
+service-port 3 user-vlan 47 vlan 3365 svlan 2401
+service-port 3 description Tl10pVlan47
+exit
+pon-onu-mng gpon_onu-1/1/1:2
+service Tl1DefaultCreate gemport 1
+exit
+exit
+write
+
+con t
+interface vport-1/1/1.2:1
+service-port 4 user-vlan 2698 vlan 2698
+exit
+pon-onu-mng gpon_onu-1/1/1:2
+mgmt-ip 10.208.6.3 255.255.255.0 vlan 2698 priority 0 route 0.0.0.0 0.0.0.0 10.208.6.2 host 1
+exit
+exit
+write
+
+
+添加认证
+con t
+interface gpon_olt-1/1/1
+onu 1 type ZTEG-F804 sn ZTEGC8B3074A
+onu 2 type ZTEG-F804 sn ZTEGC8B30761
